@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from pathlib import Path
 
 usbdevs = Path('/sys/bus/usb/devices/')
