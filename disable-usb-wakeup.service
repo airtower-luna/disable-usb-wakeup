@@ -4,7 +4,7 @@ Before=sleep.target
 
 [Service]
 Type=oneshot
-ExecStart=/etc/disable-usb-wakeup.py
+ExecStart=/etc/disable-usb-wakeup.py -q
 
 [Install]
 WantedBy=sleep.target

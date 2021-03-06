@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import argparse
 from pathlib import Path
 
 usbdevs = Path('/sys/bus/usb/devices/')
@@ -23,6 +24,13 @@ def print_device_info(dev, dev_props):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Disable wakeup from suspend for select USB devices.')
+    parser.add_argument('--quiet', '-q', action='store_true',
+                        help='disable informational output, log only for '
+                        'which devices wakeup is getting disabled')
+    args = parser.parse_args()
+
     for dev in usbdevs.iterdir():
         try:
             dev_props = dict(
@@ -33,10 +41,11 @@ if __name__ == '__main__':
             # to look at those.
             continue
 
-        print_device_info(dev, dev_props)
+        if not args.quiet:
+            print_device_info(dev, dev_props)
 
         for d in disable_wakeup:
             if all(dev_props[k].lower() == d[k].lower() for k in d.keys()):
-                print(f'Matching device for {d} found, disabling wakeup.')
+                print(f'Device {dev} matches {d}, disabling wakeup.')
                 (dev / 'power/wakeup').write_text('disabled')
                 break
