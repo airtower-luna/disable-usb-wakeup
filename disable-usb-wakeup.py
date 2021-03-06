@@ -14,19 +14,26 @@ disable_wakeup = [
     {'product': 'USB keyboard'}
 ]
 
-for dev in usbdevs.iterdir():
-    try:
-        dev_props = dict(
-            (prop, (dev / prop).read_text().strip()) for prop in properties)
-    except FileNotFoundError:
-        # Subdevices don't have all the properties, but we don't need
-        # to look at those.
-        continue
+def print_device_info(dev, dev_props):
+    print(dev)
+    for key, value in dev_props.items():
+        print(f'  {key}: {value}')
+    print()
 
-    print(f'{dev}: {dev_props}')
+if __name__ == '__main__':
+    for dev in usbdevs.iterdir():
+        try:
+            dev_props = dict(
+                (prop, (dev / prop).read_text().strip()) for prop in properties)
+        except FileNotFoundError:
+            # Subdevices don't have all the properties, but we don't need
+            # to look at those.
+            continue
 
-    for d in disable_wakeup:
-        if all(dev_props[k].lower() == d[k].lower() for k in d.keys()):
-            print(f'Matching device for {d} found, disabling wakeup.')
-            (dev / 'power/wakeup').write_text('disabled')
-            break
+        print_device_info(dev, dev_props)
+
+        for d in disable_wakeup:
+            if all(dev_props[k].lower() == d[k].lower() for k in d.keys()):
+                print(f'Matching device for {d} found, disabling wakeup.')
+                (dev / 'power/wakeup').write_text('disabled')
+                break
