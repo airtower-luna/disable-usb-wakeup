@@ -1,0 +1,10 @@
+[Unit]
+Description=Disable wakeup from USB for select devices
+Before=sleep.target
+
+[Service]
+Type=oneshot
+ExecStart=/etc/disable-usb-wakeup.py
+
+[Install]
+WantedBy=sleep.target
