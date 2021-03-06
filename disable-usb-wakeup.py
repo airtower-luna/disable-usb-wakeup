@@ -14,17 +14,20 @@ disable_wakeup = [
     {'product': 'USB keyboard'}
 ]
 
+
 def print_device_info(dev, dev_props):
     print(dev)
     for key, value in dev_props.items():
         print(f'  {key}: {value}')
     print()
 
+
 if __name__ == '__main__':
     for dev in usbdevs.iterdir():
         try:
             dev_props = dict(
-                (prop, (dev / prop).read_text().strip()) for prop in properties)
+                (prop, (dev / prop).read_text().strip())
+                for prop in properties)
         except FileNotFoundError:
             # Subdevices don't have all the properties, but we don't need
             # to look at those.
