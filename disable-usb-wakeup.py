@@ -5,13 +5,15 @@ from pathlib import Path
 
 usbdevs = Path('/sys/bus/usb/devices/')
 
-# Device properties that can be used to select a device. All elements
-# in this list refer to per-device sysfs files of the same name.
-properties = ['product', 'manufacturer', 'idProduct', 'idVendor']
+# Device properties that will be read by default, so they are
+# available for logging even if not used for device selection. All
+# elements in this set refer to per-device sysfs files of the same
+# name.
+properties = {'product', 'manufacturer', 'idProduct', 'idVendor'}
 
 # Wakeup will be disabled for any device matching any of the entries
-# in this list. You can use all items in "properties" as keys
-# here. Values are compared ignoring case.
+# in this list. You can use all standard file sysfs file names as
+# keys. Values are compared ignoring case.
 disable_wakeup = [
     {'product': 'USB keyboard'}
 ]
@@ -38,6 +40,7 @@ if __name__ == '__main__':
         with open(args.config) as fh:
             config = json.load(fh)
         disable_wakeup = config.get('disable_wakeup', disable_wakeup)
+        properties |= set(*(d.keys() for d in disable_wakeup))
 
     for dev in usbdevs.iterdir():
         try:

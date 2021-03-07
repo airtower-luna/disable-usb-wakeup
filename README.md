@@ -60,7 +60,9 @@ vendor ID `1234` and product ID `abcd`:
 
 The properties of each item in the `disable_wakeup` list are compared
 against the properties of each USB device, and wakeup set to disabled
-for each match.
+for each match. The properties for each device are read from the
+per-device sysfs files named like the properties, devices that lack
+any of the used properties are ignored.
 
 Once you have your configuration file change the `ExecStart` line in
 the systemd unit to use it, for example:
