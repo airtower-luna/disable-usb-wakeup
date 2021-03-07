@@ -43,6 +43,28 @@ script at the right time.
 
 ## Configuration
 
-Currently you have to edit the `disable_wakeup` variable to select for
-which devices to disable wakeup, please see the comment there. The
-default is "all USB keyboards".
+The default configuration contained in the script disables wakeup for
+all USB keyboards. If that doesn't suit your needs, you can create a
+JSON configuration file, for example like this if don't want your
+computer to wake up on any USB mouse, and also not for the device with
+vendor ID `1234` and product ID `abcd`:
+
+```json
+{
+    "disable_wakeup": [
+        {"product": "usb mouse"},
+        {"idVendor": "1234", "idProduct": "abcd"}
+    ]
+}
+```
+
+The properties of each item in the `disable_wakeup` list are compared
+against the properties of each USB device, and wakeup set to disabled
+for each match.
+
+Once you have your configuration file change the `ExecStart` line in
+the systemd unit to use it, for example:
+
+```
+ExecStart=/etc/disable-usb-wakeup.py -q -c /path/to/config.json
+```

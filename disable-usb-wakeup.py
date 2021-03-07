@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import argparse
+import json
 from pathlib import Path
 
 usbdevs = Path('/sys/bus/usb/devices/')
@@ -26,10 +27,17 @@ def print_device_info(dev, dev_props):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Disable wakeup from suspend for select USB devices.')
+    parser.add_argument('--config', '-c', type=Path, default=None,
+                        help='load configuration from this JSON file')
     parser.add_argument('--quiet', '-q', action='store_true',
                         help='disable informational output, log only for '
                         'which devices wakeup is getting disabled')
     args = parser.parse_args()
+
+    if args.config is not None:
+        with open(args.config) as fh:
+            config = json.load(fh)
+        disable_wakeup = config.get('disable_wakeup', disable_wakeup)
 
     for dev in usbdevs.iterdir():
         try:
